@@ -23,13 +23,13 @@ rename \
 --dryrun
 
 # Options
--h help
---location The absolute location mapped by the volume.
+--location The absolute location folder of the course. (Mapped by docker volume)
 --clean Remove files other than .mp4 and .srt.
 --dryrun Dry run without touching actual files.
 -L Alias for `location`
 -C Alias for `clean`
 -D Alias for `dryrun`
+-h help
 
 Note: You need to mount the folders using the docker volume (-v)
 
