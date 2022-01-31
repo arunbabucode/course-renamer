@@ -3,10 +3,10 @@
 namespace App\Commands;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Laminas\Stdlib\Glob;
 use LaravelZero\Framework\Commands\Command;
-use \Laminas\Stdlib\Glob;
 use function count;
-use function glob;
+use function implode;
 use function in_array;
 use function pathinfo;
 use function preg_match;
@@ -25,17 +25,17 @@ class RenamerCommand extends Command
      * @var string
      */
     protected $signature = 'rename
-                            {--L|location= : The course folder absolute location}
-                            {--D|dryrun : Dry run mode to stimulate the output}
-                            {--C|clean : Remove unwanted files not supported by media player}
-                            ';
+        {--L|location= : The course folder absolute location}
+        {--D|dryrun : Dry run mode to stimulate the output}
+        {--C|clean : Remove unwanted files not supported by media player}
+        ';
 
     /**
      * The description of the command.
      *
      * @var string
      */
-    protected $description = 'Rename courses for Media players';
+    protected $description = 'Rename courses for media player';
 
     /**
      * Execute the console command.
@@ -59,6 +59,15 @@ class RenamerCommand extends Command
             $bar = $this->output->createProgressBar(count($directories));
             $bar->start();
         }
+
+        $whiteListedExtensions = [
+            self::FILE_EXTENSION_MP4,
+            self::FILE_EXTENSION_SRT
+        ];
+
+        $formats = implode(',', $whiteListedExtensions);
+        $filterFormats = sprintf('/*.{%s}', $formats);
+
         foreach ($directories as $directory) {
 
             $folderPathInfo = pathinfo($directory);
@@ -68,14 +77,13 @@ class RenamerCommand extends Command
             $newFolderLocation = $folderPathInfo['dirname'] . '/' . $seasonName;
 
             //only apply on videos, subtitles
-            $files = Glob::glob($directory . '/*.{mp4,srt}', Glob::GLOB_BRACE);
+            $files = Glob::glob($directory . $filterFormats, Glob::GLOB_BRACE);
 
             //remove unsupported files from media player.
             $removableFiles = [];
             if ($clean) {
                 $cleanableFiles = Glob::glob($directory . '/*', Glob::GLOB_BRACE);
                 foreach ($cleanableFiles as $cleanableFile) {
-                    $whiteListedExtensions = [self::FILE_EXTENSION_MP4, self::FILE_EXTENSION_SRT];
                     $extension = pathinfo($cleanableFile)['extension'];
 
                     if (!in_array($extension, $whiteListedExtensions)) {
@@ -93,7 +101,7 @@ class RenamerCommand extends Command
                 if ($dryRun) {
                     $this->error('Removable files.');
                     $this->table(
-                        [$newFolderLocation],
+                        [$directory],
                         $removableFiles
                     );
                 }
@@ -122,7 +130,7 @@ class RenamerCommand extends Command
 
             if (!preg_match('/(Season)+\s[0-9]+\s-/i', $directory)) {
                 if ($dryRun) {
-                    $this->info('Output files sample.');
+                    $this->error('Output files sample.');
                     $this->table(
                         [$newFolderLocation],
                         $outputDryRun

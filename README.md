@@ -7,17 +7,18 @@ I was looking for a way to play my offline courses on my media player ([Jellyfin
 #### Usage
 
 ```bash
-# Clone repo
+# Clone the repo
+git clone https://github.com/arunbabucode/course-renamer.git
 
 # Build the container
 docker build -t arunbabucode/course-renamer:latest .
 
-# Run them
+# Run the container
 docker run -it \
 -v /Users/Arun/Desktop/Courses:/app/media \
 arunbabucode/course-renamer \
 rename \
---location=/app/media/renamer \
+--location=/app/media/MyAwesomeCourse \
 --clean \
 --dryrun
 
@@ -31,11 +32,13 @@ rename \
 -D Alias for `dryrun`
 
 Note: You need to mount the folders using the docker volume (-v)
- 
+
+PS: Always make a backup of your original folder structure and files. Use `dryrun` to stimulate 
+the output.
 ```
 
 
-Currently works with the course folder structure as below.
+Currently, it expects the course folder in the below structure.
 
 ```bash
 - My course
@@ -48,4 +51,18 @@ Currently works with the course folder structure as below.
 -------- 1. First chapter.srt
 -------- 2. Second chapter.mp4
 -------- 2. Second chapter.srt
+```
+
+After running the command, it converts the folder into below format.
+
+```bash
+- My course
+---- Season 01 - 1. Introduction
+-------- Episode S01E01 - 1. First chapter.mp4
+-------- Episode S01E01 - 1. First chapter.srt
+---- Season 02 - 2. Second Folder
+-------- Episode S02E01 - 1. First chapter.mp4
+-------- Episode S02E01 - 1. First chapter.srt
+-------- Episode S02E02 - 2. Second chapter.mp4
+-------- Episode S02E02 - 2. Second chapter.srt
 ```

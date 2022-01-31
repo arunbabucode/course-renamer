@@ -5,4 +5,6 @@ RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-di
 RUN cd /usr/src/app && \
     composer install --no-interaction --no-scripts --no-dev
 
-ENTRYPOINT ["/usr/src/app/course-renamer"]
+RUN php course-renamer app:build --build-version=0.1
+
+ENTRYPOINT ["/usr/src/app/builds/course-renamer"]
