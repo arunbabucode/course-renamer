@@ -114,7 +114,7 @@ class RenamerCommand extends Command
                 $filePathInfo = pathinfo($file);
                 $fileName = ltrim($filePathInfo['filename'], '0');
                 if (!preg_match('/(Episode)+\sS[0-9]+E[0-9]+/i', $fileName)) {
-                    preg_match('/([0-9]+)\.+/', $fileName, $matches);
+                    preg_match('/([0-9]+)/', $fileName, $matches);
                     $episodeNumber = (int)($matches[1]);
 
                     $episodeName = sprintf('Episode S%02dE%02d - %s', $seasonNumber, $episodeNumber, $filePathInfo['basename']);
