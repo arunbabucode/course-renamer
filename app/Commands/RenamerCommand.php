@@ -8,6 +8,7 @@ use LaravelZero\Framework\Commands\Command;
 use function count;
 use function implode;
 use function in_array;
+use function ltrim;
 use function pathinfo;
 use function preg_match;
 use function rename;
@@ -111,7 +112,7 @@ class RenamerCommand extends Command
             $outputDryRun = [];
             foreach ($files as $file) {
                 $filePathInfo = pathinfo($file);
-                $fileName = $filePathInfo['filename'];
+                $fileName = ltrim($filePathInfo['filename'], '0');
                 if (!preg_match('/(Episode)+\sS[0-9]+E[0-9]+/i', $fileName)) {
                     preg_match('/([0-9]+)\.+/', $fileName, $matches);
                     $episodeNumber = (int)($matches[1]);
